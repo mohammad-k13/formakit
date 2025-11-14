@@ -4,14 +4,14 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev --port 3000",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint --max-warnings 0",
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@repo/ui": "*",
+    "@formakit/form-builder": "*",
     "next": "^16.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
