@@ -31,10 +31,14 @@ export type FormItem<TValues extends Record<string, unknown>> = FieldItem<TValue
 export interface CustomItem<TValues extends Record<string, unknown>> {
     kind: "custom";
     id: string;
+    span?: ResponsiveSpan;
+    offset?: ResponsiveSpan;
     render: (api: FormRenderApi<TValues>) => React.ReactNode;
 }
 
 export interface FieldItem<TValues extends Record<string, unknown>> {
     kind: "field";
+    span?: ResponsiveSpan;
+    offset?: ResponsiveSpan;
     field: FieldConfig<TValues>;
 }

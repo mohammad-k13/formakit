@@ -44,17 +44,6 @@ const demoStyles = `
     color: #9f2d20;
     font-size: 13px;
   }
-
-  .formakit-column {
-    display: grid;
-    gap: 18px;
-  }
-
-  @media (max-width: 720px) {
-    .formakit-column {
-      grid-column: span 12 !important;
-    }
-  }
 `;
 
 const formConfig: FormConfig<DemoFormValues> = {
@@ -79,10 +68,20 @@ const formConfig: FormConfig<DemoFormValues> = {
       columns: [
         {
           id: "full-name-column",
-          span: 6,
+          span: {
+            xs: 12, // mobile full row
+            sm: 5,
+            md: 24,
+            lg: 12,
+          },
           items: [
             {
               kind: "field",
+              span: {
+                xs: 5,
+                md: 8,
+                lg: 12,
+              },
               field: {
                 name: "fullName",
                 type: "text",

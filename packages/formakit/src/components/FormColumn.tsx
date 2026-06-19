@@ -3,18 +3,11 @@ import { FieldShell } from "./FieldShell";
 import { defaultFieldComponents } from "./fields/defaultFieldComponents";
 import { useFieldController } from "../hooks/useFieldController";
 import { resolveCondition } from "../utils/resolveCondition";
-import type { FieldComponent, FieldConfig, FormColumn as FormColumnConfig, FormConfig, FormRenderApi, FormState } from "../types";
+import { createResponsiveGridStyle } from "../utils/responsiveGrid";
+import type { FieldComponent, FieldConfig, FormColumn as FormColumnConfig, FormConfig, FormItem, FormRenderApi, FormState } from "../types";
 
-function spanToStyle(span: FormColumnConfig<Record<string, unknown>>["span"]): React.CSSProperties {
-    if (typeof span === "number") {
-        return { gridColumn: `span ${span}` };
-    }
-
-    if (span?.md) {
-        return { gridColumn: `span ${span.md}` };
-    }
-
-    return { gridColumn: "span 12" };
+function hasResponsiveGridPlacement<TValues extends Record<string, unknown>>(item: FormItem<TValues>) {
+    return Boolean(item.span || item.offset);
 }
 
 export function FormColumn<TValues extends Record<string, unknown>>(props: {
@@ -30,23 +23,50 @@ export function FormColumn<TValues extends Record<string, unknown>>(props: {
     if (resolveCondition(column.hidden, state.values, config.context)) return null;
 
     return (
-        <div className="formakit-column" style={spanToStyle(column.span)}>
+        <div className="formakit-column" style={createResponsiveGridStyle({ span: column.span, offset: column.offset, prefix: "column" })}>
             {column.items.map((item) => {
                 if (item.kind === "custom") {
-                    return <React.Fragment key={item.id}>{item.render(api)}</React.Fragment>;
+                    return (
+                        <FormItemShell key={item.id} item={item}>
+                            {item.render(api)}
+                        </FormItemShell>
+                    );
                 }
 
                 return (
-                    <FieldItemRenderer
-                        key={item.field.name}
-                        field={item.field}
-                        config={config}
-                        state={state}
-                        setValue={setValue}
-                        setTouched={setTouched}
-                    />
+                    <FormItemShell key={item.field.name} item={item}>
+                        <FieldItemRenderer
+                            field={item.field}
+                            config={config}
+                            state={state}
+                            setValue={setValue}
+                            setTouched={setTouched}
+                        />
+                    </FormItemShell>
                 );
             })}
+        </div>
+    );
+}
+
+function FormItemShell<TValues extends Record<string, unknown>>(props: {
+    item: FormItem<TValues>;
+    children: React.ReactNode;
+}) {
+    if (!hasResponsiveGridPlacement(props.item)) {
+        return <>{props.children}</>;
+    }
+
+    return (
+        <div
+            className="formakit-item"
+            style={createResponsiveGridStyle({
+                span: props.item.span,
+                offset: props.item.offset,
+                prefix: "item",
+            })}
+        >
+            {props.children}
         </div>
     );
 }

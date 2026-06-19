@@ -78,3 +78,29 @@ export type FieldComponent<TValues extends Record<string, unknown>> = React.Comp
 export type FieldComponentRegistry<TValues extends Record<string, unknown>> = Partial<
     Record<FieldType | string, FieldComponent<TValues>>
 >;
+
+export interface DesignComponentProps<TValue = unknown> {
+    name: string;
+    value: TValue;
+    label?: string;
+    placeholder?: string;
+    disabled?: boolean;
+    readOnly?: boolean;
+    required?: boolean;
+    error?: boolean;
+    errorMessage?: string | null;
+    description?: string;
+    options?: SelectOption[];
+    onChange: (value: TValue) => void;
+    onBlur: () => void;
+    props?: Record<string, unknown>;
+}
+
+export type DesignComponent<TValue = unknown> = React.ComponentType<DesignComponentProps<TValue>>;
+
+export type DesignComponentRegistry = Partial<Record<FieldType | string, DesignComponent>>;
+
+export interface DesignSystemConfig<TValues extends Record<string, unknown> = Record<string, unknown>> {
+    components: DesignComponentRegistry;
+    adapters?: Partial<Record<FieldType | string, FieldComponent<TValues>>>;
+}

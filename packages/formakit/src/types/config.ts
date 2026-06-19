@@ -1,6 +1,6 @@
 import type React from "react";
 import type { FormCallbacks, FormSubmitConfig } from "./callbacks";
-import type { FieldComponentRegistry } from "./fields";
+import type { DesignSystemConfig, FieldComponentRegistry } from "./fields";
 import type { FormRow } from "./layout";
 import type { FormValidator, ValidationModeConfig } from "./validation";
 
@@ -12,6 +12,7 @@ export interface FormConfig<TValues extends Record<string, unknown> = Record<str
     submit?: FormSubmitConfig<TValues>;
     callbacks?: FormCallbacks<TValues>;
     components?: Partial<FieldComponentRegistry<TValues>>;
+    designSystem?: DesignSystemConfig<TValues>;
     validators?: FormValidator<TValues> | FormValidator<TValues>[];
     context?: Record<string, unknown>;
 }

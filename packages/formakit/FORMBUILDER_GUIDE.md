@@ -16,6 +16,183 @@ FormBuilder is a reusable React library that receives a JSON config and renders 
 - Full extensibility via extra props and Providers
 - Rows → Columns → Fields structure
 
+## Using Your Own UI Components
+
+FormaKit can render fields with your design system components, such as MUI, AntD, or your internal UI kit.
+
+Pass UI components through `config.designSystem.components`. FormaKit adapts form state, validation errors, labels, options, and events into a simple component contract:
+
+```tsx
+import { FormBuilder, type DesignComponentProps, type FormConfig } from "@formakit/form-builder";
+import TextField from "@mui/material/TextField";
+
+type LoginValues = {
+  email: string;
+  password: string;
+};
+
+function MuiTextInput(props: DesignComponentProps) {
+  return (
+    <TextField
+      fullWidth
+      name={props.name}
+      label={props.label}
+      value={props.value}
+      placeholder={props.placeholder}
+      disabled={props.disabled}
+      error={props.error}
+      helperText={props.errorMessage ?? props.description}
+      onBlur={props.onBlur}
+      onChange={(event) => props.onChange(event.target.value)}
+      {...props.props}
+    />
+  );
+}
+
+const config: FormConfig<LoginValues> = {
+  initialValues: {
+    email: "",
+    password: "",
+  },
+  designSystem: {
+    components: {
+      email: MuiTextInput,
+      password: MuiTextInput,
+      text: MuiTextInput,
+    },
+  },
+  rows: [
+    {
+      id: "login",
+      columns: [
+        {
+          id: "main",
+          span: 12,
+          items: [
+            {
+              kind: "field",
+              field: {
+                name: "email",
+                type: "email",
+                label: "Email",
+                validation: {
+                  rules: [{ type: "required", message: "Email is required" }],
+                },
+              },
+            },
+            {
+              kind: "field",
+              field: {
+                name: "password",
+                type: "password",
+                label: "Password",
+              },
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
+export function LoginForm() {
+  return <FormBuilder config={config} />;
+}
+```
+
+For advanced cases, use `config.components` to provide a full FormaKit field renderer. Explicit `components` override adapted `designSystem.components`.
+
+## Responsive Layout
+
+FormaKit uses a 12-column grid. A column can use a fixed span:
+
+```tsx
+{
+  id: "full-name-column",
+  span: 12,
+  items: [...]
+}
+```
+
+Or a responsive span object:
+
+```tsx
+{
+  id: "full-name-column",
+  span: {
+    xs: 12, // mobile: full row
+    md: 8,  // tablet/medium: 8 columns
+    lg: 4,  // desktop/large: 4 columns
+  },
+  items: [
+    {
+      kind: "field",
+      field: {
+        name: "fullName",
+        type: "text",
+        label: "Full name",
+      },
+    },
+  ],
+}
+```
+
+Supported breakpoints are `xs`, `sm`, `md`, `lg`, and `xl`.
+
+Fields and custom items can also use responsive spans inside a column. This is useful when one column contains multiple inputs with different sizes:
+
+```tsx
+{
+  id: "profile-column",
+  span: 12,
+  items: [
+    {
+      kind: "field",
+      span: { xs: 12, md: 6, lg: 4 },
+      field: {
+        name: "firstName",
+        type: "text",
+        label: "First name",
+      },
+    },
+    {
+      kind: "field",
+      span: { xs: 12, md: 6, lg: 4 },
+      field: {
+        name: "lastName",
+        type: "text",
+        label: "Last name",
+      },
+    },
+    {
+      kind: "field",
+      span: { xs: 12, md: 12, lg: 4 },
+      field: {
+        name: "nickname",
+        type: "text",
+        label: "Nickname",
+      },
+    },
+  ],
+}
+```
+
+Use column `span` to size groups in a row. Use item `span` to size individual fields inside a column.
+
+## Validation After Submit
+
+By default, FormaKit validates on submit and revalidates invalid fields on change after the first submit. This means a required error is removed as soon as the user enters a valid value.
+
+You can customize this with `mode.revalidateAfterSubmit`:
+
+```tsx
+{
+  mode: {
+    revalidateAfterSubmit: "change", // "change" | "blur" | "change-or-blur"
+  },
+}
+```
+
 ## Step-by-Step Learning Path
 
 ### Phase 1: Foundation & Architecture (Start Here)
@@ -410,4 +587,3 @@ interface BaseFieldProps {
 ---
 
 **Remember:** Build incrementally, test thoroughly, and refactor often. Good luck! 🚀
-

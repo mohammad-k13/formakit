@@ -2,6 +2,10 @@ export type { FormCallbacks, FormActionHelpers, FormSubmitConfig, SubmitFailedAr
 export type { FormBuilderProps, FormConfig } from "./config";
 export type {
     ConditionResolver,
+    DesignComponent,
+    DesignComponentProps,
+    DesignComponentRegistry,
+    DesignSystemConfig,
     FieldComponent,
     FieldComponentProps,
     FieldComponentRegistry,

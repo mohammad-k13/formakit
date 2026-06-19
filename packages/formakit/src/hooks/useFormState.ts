@@ -1,8 +1,21 @@
 import { useCallback, useMemo, useState } from "react";
 import { createInitialValues } from "../utils/createInitialValues";
+import { includesRevalidationTrigger } from "../utils/eventTriggers";
 import { runFormValidation } from "../utils/runFormValidation";
-import { setFieldError } from "../utils/runFieldValidation";
+import { runFieldValidation, setFieldError } from "../utils/runFieldValidation";
 import type { FormActionHelpers, FormConfig, FormErrors, FormRenderApi, FormState } from "../types";
+
+function findField<TValues extends Record<string, unknown>>(config: FormConfig<TValues>, name: keyof TValues & string) {
+    for (const row of config.rows) {
+        for (const column of row.columns) {
+            for (const item of column.items) {
+                if (item.kind === "field" && item.field.name === name) return item.field;
+            }
+        }
+    }
+
+    return undefined;
+}
 
 export function useFormState<TValues extends Record<string, unknown>>(config: FormConfig<TValues>) {
     const [values, setValues] = useState<TValues>(() => createInitialValues(config));
@@ -17,25 +30,52 @@ export function useFormState<TValues extends Record<string, unknown>>(config: Fo
         setErrors((current) => setFieldError(current, name, error));
     }, []);
 
+    const validateField = useCallback(
+        async (name: keyof TValues & string, nextValues: TValues) => {
+            const field = findField(config, name);
+            if (!field) return null;
+
+            const error = await runFieldValidation({ field, values: nextValues, context: config.context });
+            setErrors((current) => setFieldError(current, name, error));
+            return error;
+        },
+        [config],
+    );
+
     const setValue = useCallback(
         (name: keyof TValues & string, value: unknown) => {
             setValues((current) => {
                 const next = { ...current, [name]: value } as TValues;
                 config.callbacks?.onFieldChange?.({ name, value, values: next });
                 config.callbacks?.onValuesChange?.({ values: next, changedField: name });
+
+                if (
+                    submitCount > 0 &&
+                    includesRevalidationTrigger(config.mode?.revalidateAfterSubmit, "change")
+                ) {
+                    void validateField(name, next);
+                }
+
                 return next;
             });
             setDirtyFields((current) => ({ ...current, [name]: true }));
         },
-        [config.callbacks],
+        [config.callbacks, config.mode?.revalidateAfterSubmit, submitCount, validateField],
     );
 
     const setTouched = useCallback(
         (name: keyof TValues & string, touchedValue: boolean) => {
             setTouchedState((current) => ({ ...current, [name]: touchedValue }));
             if (touchedValue) config.callbacks?.onFieldBlur?.({ name, values });
+            if (
+                touchedValue &&
+                submitCount > 0 &&
+                includesRevalidationTrigger(config.mode?.revalidateAfterSubmit, "blur")
+            ) {
+                void validateField(name, values);
+            }
         },
-        [config.callbacks, values],
+        [config.callbacks, config.mode?.revalidateAfterSubmit, submitCount, validateField, values],
     );
 
     const validateForm = useCallback(async () => {
