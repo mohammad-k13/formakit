@@ -1,3 +1,4 @@
+export type { FormBuilderAdaptor } from "./adapter";
 export type { FormCallbacks, FormActionHelpers, FormSubmitConfig, SubmitFailedArgs, SubmitSuccessArgs } from "./callbacks";
 export type { FormBuilderProps, FormConfig } from "./config";
 export type {

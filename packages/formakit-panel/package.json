@@ -1,0 +1,51 @@
+{
+  "name": "formakit-panel",
+  "version": "0.1.0",
+  "description": "Admin panel for editing and previewing FormaKit form configs",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "license": "MIT",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js",
+      "default": "./dist/server.js"
+    },
+    "./styles.css": {
+      "types": "./dist/styles.css.d.ts",
+      "default": "./dist/styles.css"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc && cp src/styles.css dist/styles.css && cp src/styles.css.d.ts dist/styles.css.d.ts",
+    "dev": "tsc --watch",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "formakit": ">=0.1.0",
+    "react": "^18.2.0 || ^19.0.0",
+    "react-dom": "^18.2.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "lucide-react": "^0.511.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "*",
+    "@types/react": "^18.2.0 || ^19.0.0",
+    "@types/react-dom": "^18.2.0 || ^19.0.0",
+    "formakit": "*",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "typescript": "^5.9.2"
+  }
+}

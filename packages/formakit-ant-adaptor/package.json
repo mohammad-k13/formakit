@@ -1,25 +1,21 @@
 {
-  "name": "formakit",
-  "version": "0.1.1",
+  "name": "formakit-ant-adaptor",
+  "version": "0.1.0",
   "private": false,
-  "description": "A config-driven React form builder with responsive grid layout, validation, and pluggable UI adaptors",
+  "description": "Ant Design adaptor plugin for formakit",
   "keywords": [
     "react",
     "form",
-    "form-builder",
-    "formkit",
-    "validation",
-    "grid",
-    "config-driven",
-    "typescript",
+    "formakit",
     "antd",
+    "ant-design",
+    "adaptor",
     "design-system"
   ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "license": "MIT",
-  
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -36,19 +32,22 @@
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
+    "antd": "^5.28.0",
+    "dayjs": "^1.11.13",
+    "formakit": "^0.1.0",
     "react": "^18.2.0 || ^19.0.0",
     "react-dom": "^18.2.0 || ^19.0.0"
   },
   "devDependencies": {
-    "@repo/typescript-config": "*",
     "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
     "@types/react": "^18.2.0 || ^19.0.0",
     "@types/react-dom": "^18.2.0 || ^19.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
+    "antd": "^5.28.0",
+    "dayjs": "^1.11.13",
+    "formakit": "^0.1.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "typescript": "^5.9.2"
-  },
-  "dependencies": {
-    "react-grid-layout": "^2.2.2"
   }
 }

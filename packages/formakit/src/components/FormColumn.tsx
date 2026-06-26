@@ -6,8 +6,22 @@ import { resolveCondition } from "../utils/resolveCondition";
 import { createResponsiveGridStyle } from "../utils/responsiveGrid";
 import type { FieldComponent, FieldConfig, FormColumn as FormColumnConfig, FormConfig, FormItem, FormRenderApi, FormState } from "../types";
 
-function hasResponsiveGridPlacement<TValues extends Record<string, unknown>>(item: FormItem<TValues>) {
-    return Boolean(item.span || item.offset);
+function FormItemShell<TValues extends Record<string, unknown>>(props: {
+    item: FormItem<TValues>;
+    children: React.ReactNode;
+}) {
+    return (
+        <div
+            className="formakit-item"
+            style={createResponsiveGridStyle({
+                span: props.item.span ?? 12,
+                offset: props.item.offset,
+                prefix: "item",
+            })}
+        >
+            {props.children}
+        </div>
+    );
 }
 
 export function FormColumn<TValues extends Record<string, unknown>>(props: {
@@ -45,28 +59,6 @@ export function FormColumn<TValues extends Record<string, unknown>>(props: {
                     </FormItemShell>
                 );
             })}
-        </div>
-    );
-}
-
-function FormItemShell<TValues extends Record<string, unknown>>(props: {
-    item: FormItem<TValues>;
-    children: React.ReactNode;
-}) {
-    if (!hasResponsiveGridPlacement(props.item)) {
-        return <>{props.children}</>;
-    }
-
-    return (
-        <div
-            className="formakit-item"
-            style={createResponsiveGridStyle({
-                span: props.item.span,
-                offset: props.item.offset,
-                prefix: "item",
-            })}
-        >
-            {props.children}
         </div>
     );
 }

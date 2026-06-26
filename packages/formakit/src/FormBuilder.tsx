@@ -1,15 +1,18 @@
 import React from "react";
 import { FormRenderer } from "./components/FormRenderer";
-import { FormBuilderProvider } from "./context/FormBuilderContext";
+import { FormBuilderProvider, useFormBuilderAdaptor } from "./context/FormBuilderContext";
 import { useFormBuilder } from "./hooks/useFormBuilder";
 import type { FormBuilderProps } from "./types";
+import { mergeConfigWithAdaptor } from "./utils/mergeConfigWithAdaptor";
 
 export function FormBuilder<TValues extends Record<string, unknown> = Record<string, unknown>>({
     config,
     className,
     style,
 }: FormBuilderProps<TValues>) {
-    const { config: normalizedConfig, state, api, setValue, setTouched, submit } = useFormBuilder(config);
+    const adaptor = useFormBuilderAdaptor<TValues>();
+    const mergedConfig = React.useMemo(() => mergeConfigWithAdaptor(config, adaptor), [adaptor, config]);
+    const { config: normalizedConfig, state, api, setValue, setTouched, submit } = useFormBuilder(mergedConfig);
 
     return (
         <FormBuilderProvider api={api}>

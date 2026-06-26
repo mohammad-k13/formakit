@@ -11,7 +11,8 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@formakit/form-builder": "*",
+    "formakit": "*",
+    "formakit-panel": "*",
     "next": "^16.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
